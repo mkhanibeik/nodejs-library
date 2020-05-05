@@ -4,6 +4,7 @@
   "description": "A Sample Nodejs Library Application",
   "main": "index.js",
   "scripts": {
+    "start": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -15,5 +16,21 @@
   "bugs": {
     "url": "https://github.com/mkhanibeik/nodejs-library/issues"
   },
-  "homepage": "https://github.com/mkhanibeik/nodejs-library#readme"
+  "homepage": "https://github.com/mkhanibeik/nodejs-library#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^5.9.12",
+    "nodemon": "^2.0.3"
+  },
+  "nodemonConfig": {
+    "restartable": "rs",
+    "ignore": [
+      "node_modules/**/node_modules"
+    ],
+    "delay": "2500",
+    "env": {
+      "NODE_ENV": "development",
+      "PORT": 4000
+    }
+  }
 }
