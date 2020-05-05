@@ -1,0 +1,19 @@
+{
+  "name": "nodejs-library",
+  "version": "1.0.0",
+  "description": "A Sample Nodejs Library Application",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mkhanibeik/nodejs-library.git"
+  },
+  "author": "mkhanibeik",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mkhanibeik/nodejs-library/issues"
+  },
+  "homepage": "https://github.com/mkhanibeik/nodejs-library#readme"
+}
