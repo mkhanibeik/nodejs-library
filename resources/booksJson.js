@@ -23,5 +23,29 @@ db.books.insert([
     genre: 'Sicence Fiction',
     author: 'Jules Verne',
     read: false
+  },
+  {
+    title: 'Claire DeWitt and the City of the Dead',
+    author: 'Sara Gran',
+    genre: 'Crime',
+    read: false
+  },
+  {
+    title: 'Gone Girl',
+    author: 'Gillian Flynn',
+    genre: 'Crime',
+    read: true,
+  },
+  {
+    title: 'The Thief',
+    author: 'Fuminori Nakamura',
+    genre: 'Crime',
+    read: false
+  },
+  {
+    title: 'American Dirt',
+    author: 'Jeanine Cummins',
+    genre: 'Crime',
+    read: false
   }
 ]);
