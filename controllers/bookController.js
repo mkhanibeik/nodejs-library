@@ -1,5 +1,4 @@
 function bookController(Book) {
-
   // get all books
   function getAll(req, res) {
     Book.find((err, books) => {
@@ -10,7 +9,7 @@ function bookController(Book) {
     });
   }
 
-  return { getAll }
+  return { getAll };
 }
 
 module.exports = bookController;

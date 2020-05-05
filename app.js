@@ -9,7 +9,7 @@ const port = process.env.PORT || 4000;
 
 // mongo db
 mongoose.set('useUnifiedTopology', true);
-const db = mongoose.connect('mongodb://localhost/bookAPI', { useNewUrlParser: true });
+mongoose.connect('mongodb://localhost/bookAPI', { useNewUrlParser: true });
 
 app.use('/api', bookRouter);
 app.get('/', (req, res) => {
