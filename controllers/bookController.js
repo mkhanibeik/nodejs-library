@@ -14,7 +14,12 @@ function bookController(Book) {
     });
   }
 
-  return { getAll };
+  // get a book by id
+  function getOne(req, res) {
+    return res.json(req.book);
+  }
+
+  return { getAll, getOne };
 }
 
 module.exports = bookController;
