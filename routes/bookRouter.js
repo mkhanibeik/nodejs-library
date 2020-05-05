@@ -7,26 +7,32 @@ function routes(Book) {
 
   // middleware to intercept the book object and add it to the request to be used later
   bookRouter.use('/books/:bookId', (req, res, next) => {
-    Book.findById(req.params.bookId, (err, book) => {
-      if (err) {
-        return res.send(err);
-      }
-      if (book) {
-        // add book to the request
-        req.book = book;
-        return next();
-      }
-      return res.sendStatus(404);
-    });
+    controller.getOne(req.params.bookId)
+      .then((book) => {
+        if (book) {
+          req.book = book;
+          return next();
+        }
+        return res.sendStatus(404);
+      }, (err) => res.send(err));
   });
 
   // get all books
   bookRouter.route('/books')
-    .get(controller.getAll);
+    .get(async (req, res) => {
+      controller.getAll(req)
+        .then((books) => {
+          res.status(200);
+          return res.json(books);
+        }, (err) => {
+          res.status(500);
+          return res.status(500).send(err);
+        });
+    });
 
   //  get book by id
   bookRouter.route('/books/:bookId')
-    .get(controller.getOne);
+    .get(async (req, res) => res.json(req.book));
 
   return bookRouter;
 }
