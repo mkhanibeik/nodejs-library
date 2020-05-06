@@ -113,4 +113,39 @@ describe('Book Controller Tests:', () => {
       expect(returnedBook).toBeUndefined();
     });
   });
+
+  describe('Create One Book', () => {
+    it('should return a book with id.', async () => {
+      // given
+      const book = {
+        title: 'The Time Machine',
+        genre: 'Science Fiction',
+        author: 'H. G. Wells',
+        read: false
+      };
+      mockingoose(model).toReturn(book, 'save');
+
+      // when
+      const controller = bookController(model);
+      const returnedBook = await controller.create(book);
+
+      // then
+      expect(returnedBook).toHaveProperty('_id');
+    });
+
+    it('Should not allow empty title.', async () => {
+      // given
+      const book = {
+        genre: 'Science Fiction',
+        author: 'H. G. Wells',
+        read: false
+      };
+
+      // when
+      const controller = bookController(model);
+      expect(async () => { controller.create(book); })
+        // then
+        .rejects.toThrow('Title is required');
+    });
+  });
 });

@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 const Book = require('./models/bookModel');
 const bookRouter = require('./routes/bookRouter')(Book);
 
@@ -10,6 +11,10 @@ const port = process.env.PORT || 4000;
 // mongo db
 mongoose.set('useUnifiedTopology', true);
 mongoose.connect('mongodb://localhost/bookAPI', { useNewUrlParser: true });
+
+// body parser
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 app.use('/api', bookRouter);
 app.get('/', (req, res) => {

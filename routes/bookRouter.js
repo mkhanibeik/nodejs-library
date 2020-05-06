@@ -14,7 +14,7 @@ function routes(Book) {
           return next();
         }
         return res.sendStatus(404);
-      }, (err) => res.send(err));
+      }, (err) => res.status(500).send(err));
   });
 
   // get all books
@@ -24,15 +24,23 @@ function routes(Book) {
         .then((books) => {
           res.status(200);
           return res.json(books);
-        }, (err) => {
-          res.status(500);
-          return res.status(500).send(err);
-        });
+        }, (err) => res.status(500).send(err));
     });
 
   //  get book by id
   bookRouter.route('/books/:bookId')
     .get(async (req, res) => res.json(req.book));
+
+  // create book
+  bookRouter.route('/books')
+    .post(async (req, res) => {
+      controller.create(req.body)
+        .then((book) => {
+          res.status(200);
+          return res.json(book);
+        })
+        .catch((err) => res.status(400).send(err));
+    });
 
   return bookRouter;
 }

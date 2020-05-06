@@ -13,7 +13,19 @@ function bookController(Book) {
     return Book.findById(bookId).exec();
   }
 
-  return { getAll, getOne };
+  // create book
+  function create(book) {
+    if (!book.title) {
+      return new Promise(() => {
+        const err = 'Title is required';
+        throw err;
+      });
+    }
+    const bookToSave = new Book(book);
+    return bookToSave.save();
+  }
+
+  return { getAll, getOne, create };
 }
 
 module.exports = bookController;
