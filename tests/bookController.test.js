@@ -110,7 +110,7 @@ describe('Book Controller Tests:', () => {
     });
   });
 
-  describe('Create One Book', () => {
+  describe('Create Book', () => {
     it('should return a book with id.', async () => {
       // given
       const book = {
@@ -145,7 +145,7 @@ describe('Book Controller Tests:', () => {
     });
   });
 
-  describe('Update One Book', () => {
+  describe('Update Book', () => {
     it('should return updated book.', async () => {
       // given
       const bookId = '507f191e810c19729de860ea';
@@ -187,7 +187,7 @@ describe('Book Controller Tests:', () => {
     });
   });
 
-  describe('Patch One Book', () => {
+  describe('Patch Book', () => {
     it('should return patched book.', async () => {
       // given
       const bookId = '507f191e810c19729de860ea';
@@ -227,6 +227,38 @@ describe('Book Controller Tests:', () => {
 
       // then
       expect(JSON.parse(JSON.stringify(returnedBook))).toMatchObject(updatedBook);
+    });
+  });
+
+  describe('Delete Book', () => {
+    it('should return deleted book.', async () => {
+      // given
+      const bookId = '507f191e810c19729de860ea';
+      const mockBook = mockBooks[0];
+      mockBook._id = bookId;
+      mockingoose(model).toReturn(mockBook, 'remove');
+
+      // when
+      const controller = bookController(model);
+      const deletedBook = await controller.remove(mockBook);
+
+      // then
+      expect(JSON.parse(JSON.stringify(deletedBook))).toMatchObject(mockBook);
+    });
+
+    it('should return no book.', async () => {
+      // given
+      const bookId = '507f191e810c19729de860ea';
+      const mockBook = mockBooks[0];
+      mockBook._id = bookId;
+      mockingoose(model).toReturn(undefined, 'remove');
+
+      // when
+      const controller = bookController(model);
+      const deletedBook = await controller.remove(mockBook);
+
+      // then
+      expect(deletedBook).toBeUndefined();
     });
   });
 });

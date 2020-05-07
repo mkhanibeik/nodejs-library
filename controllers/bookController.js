@@ -50,8 +50,14 @@ function bookController(Book) {
     return bookToSave.save();
   }
 
+  // delete book
+  function remove(book) {
+    const bookToDelete = new Book(book);
+    return bookToDelete.remove();
+  }
+
   return {
-    getAll, getOne, create, update, patch
+    getAll, getOne, create, update, patch, remove
   };
 }
 

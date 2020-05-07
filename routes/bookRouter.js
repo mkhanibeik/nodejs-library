@@ -64,6 +64,13 @@ function routes(Book) {
         .catch((err) => res.status(400).send(err.message));
     });
 
+  // delete book
+  bookRouter.route('/books/:bookId')
+    .delete(async (req, res) => {
+      controller.remove(req.book)
+        .then(() => res.sendStatus(204));
+    });
+
   return bookRouter;
 }
 
