@@ -16,16 +16,29 @@ function bookController(Book) {
   // create book
   function create(book) {
     if (!book.title) {
-      return new Promise(() => {
-        const err = 'Title is required';
-        throw err;
-      });
+      return Promise.reject(new Error('Title is required'));
     }
     const bookToSave = new Book(book);
     return bookToSave.save();
   }
 
-  return { getAll, getOne, create };
+  // update book
+  function update(originalBook, newBook) {
+    if (!newBook.title) {
+      return Promise.reject(new Error('Title is required'));
+    }
+
+    const bookToSave = new Book(originalBook);
+    bookToSave.title = newBook.title;
+    bookToSave.author = newBook.author;
+    bookToSave.genre = newBook.genre;
+    bookToSave.read = newBook.read;
+    return bookToSave.save();
+  }
+
+  return {
+    getAll, getOne, create, update
+  };
 }
 
 module.exports = bookController;

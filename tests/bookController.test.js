@@ -56,7 +56,7 @@ describe('Book Controller Tests:', () => {
       const returnedBooks = await controller.getAll(req);
 
       // then
-      expect(returnedBooks.length).toEqual(mockBooks.length);
+      expect(returnedBooks).toHaveLength(mockBooks.length);
       expect(returnedBooks).toContainEqual(
         expect.objectContaining({ _id: expect.anything() })
       );
@@ -73,7 +73,7 @@ describe('Book Controller Tests:', () => {
       const returnedBooks = await controller.getAll(req);
 
       // then
-      expect(returnedBooks.length).toEqual(crimeBooks.length);
+      expect(returnedBooks).toHaveLength(crimeBooks.length);
       expect(returnedBooks).toContainEqual(
         expect.objectContaining({ _id: expect.anything() })
       );
@@ -93,11 +93,7 @@ describe('Book Controller Tests:', () => {
       const returnedBook = await controller.getOne(bookId);
 
       // then
-      expect(returnedBook.__id).toEqual(mockBook.__id);
-      expect(returnedBook.title).toEqual(mockBook.title);
-      expect(returnedBook.author).toEqual(mockBook.author);
-      expect(returnedBook.genre).toEqual(mockBook.genre);
-      expect(returnedBook.read).toEqual(mockBook.read);
+      expect(JSON.parse(JSON.stringify(returnedBook))).toMatchObject(mockBook);
     });
 
     it('should return no book.', async () => {
@@ -143,7 +139,49 @@ describe('Book Controller Tests:', () => {
 
       // when
       const controller = bookController(model);
-      expect(async () => { controller.create(book); })
+      await expect(controller.create(book))
+        // then
+        .rejects.toThrow('Title is required');
+    });
+  });
+
+  describe('Update One Book', () => {
+    it('should return updated book.', async () => {
+      // given
+      const bookId = '507f191e810c19729de860ea';
+      const mockBook = mockBooks[0];
+      mockBook._id = bookId;
+      const updatedBook = {
+        _id: bookId,
+        title: 'The Time Machine',
+        genre: 'Science Fiction',
+        author: 'H. G. Wells',
+        read: true
+      };
+      mockingoose(model).toReturn(updatedBook, 'save');
+
+      // when
+      const controller = bookController(model);
+      const returnedBook = await controller.update(mockBook, updatedBook);
+
+      // then
+      expect(JSON.parse(JSON.stringify(returnedBook))).toMatchObject(updatedBook);
+    });
+
+    it('Should not allow empty title.', async () => {
+      // given
+      const bookId = '507f191e810c19729de860ea';
+      const mockBook = mockBooks[0];
+      mockBook._id = bookId;
+      const updatedBook = {
+        genre: 'Science Fiction',
+        author: 'H. G. Wells',
+        read: false
+      };
+
+      // when
+      const controller = bookController(model);
+      await expect(controller.update(mockBook, updatedBook))
         // then
         .rejects.toThrow('Title is required');
     });

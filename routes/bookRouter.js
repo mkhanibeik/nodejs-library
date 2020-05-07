@@ -36,10 +36,21 @@ function routes(Book) {
     .post(async (req, res) => {
       controller.create(req.body)
         .then((book) => {
+          res.status(201);
+          return res.json(book);
+        })
+        .catch((err) => res.status(400).send(err.message));
+    });
+
+  // update book
+  bookRouter.route('/books/:bookId')
+    .put(async (req, res) => {
+      controller.update(req.book, req.body)
+        .then((book) => {
           res.status(200);
           return res.json(book);
         })
-        .catch((err) => res.status(400).send(err));
+        .catch((err) => res.status(400).send(err.message));
     });
 
   return bookRouter;
