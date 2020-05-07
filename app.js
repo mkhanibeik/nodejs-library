@@ -10,7 +10,11 @@ const port = process.env.PORT || 4000;
 
 // mongo db
 mongoose.set('useUnifiedTopology', true);
-mongoose.connect('mongodb://localhost/bookAPI', { useNewUrlParser: true });
+if (process.env.ENV === 'Test') {
+  mongoose.connect('mongodb://localhost/bookAPI_test', { useNewUrlParser: true });
+} else {
+  mongoose.connect('mongodb://localhost/bookAPI', { useNewUrlParser: true });
+}
 
 // body parser
 app.use(bodyParser.urlencoded({ extended: true }));
