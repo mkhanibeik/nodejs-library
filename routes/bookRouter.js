@@ -53,6 +53,17 @@ function routes(Book) {
         .catch((err) => res.status(400).send(err.message));
     });
 
+  // patch book
+  bookRouter.route('/books/:bookId')
+    .patch(async (req, res) => {
+      controller.patch(req.book, req.body)
+        .then((book) => {
+          res.status(200);
+          return res.json(book);
+        })
+        .catch((err) => res.status(400).send(err.message));
+    });
+
   return bookRouter;
 }
 

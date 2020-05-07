@@ -36,8 +36,22 @@ function bookController(Book) {
     return bookToSave.save();
   }
 
+  // patch book
+  function patch(originalBook, newBook) {
+    const bookToSave = new Book(originalBook);
+    Object.entries(newBook).forEach((item) => {
+      const key = item[0];
+      const value = item[1];
+      // don't update the id of the book
+      if (key !== '_id') {
+        bookToSave[key] = value;
+      }
+    });
+    return bookToSave.save();
+  }
+
   return {
-    getAll, getOne, create, update
+    getAll, getOne, create, update, patch
   };
 }
 

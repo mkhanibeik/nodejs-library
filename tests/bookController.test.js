@@ -186,4 +186,47 @@ describe('Book Controller Tests:', () => {
         .rejects.toThrow('Title is required');
     });
   });
+
+  describe('Patch One Book', () => {
+    it('should return patched book.', async () => {
+      // given
+      const bookId = '507f191e810c19729de860ea';
+      const mockBook = mockBooks[0];
+      mockBook._id = bookId;
+      const patchedBook = {
+        read: true
+      };
+      const updatedBook = mockBook;
+      updatedBook.read = true;
+      mockingoose(model).toReturn(updatedBook, 'save');
+
+      // when
+      const controller = bookController(model);
+      const returnedBook = await controller.patch(mockBook, patchedBook);
+
+      // then
+      expect(JSON.parse(JSON.stringify(returnedBook))).toMatchObject(updatedBook);
+    });
+
+    it('id should not be updated.', async () => {
+      // given
+      const bookId = '507f191e810c19729de860ea';
+      const mockBook = mockBooks[0];
+      mockBook._id = bookId;
+      const patchedBook = {
+        _id: '3243242342342355',
+        read: true
+      };
+      const updatedBook = mockBook;
+      updatedBook.read = true;
+      mockingoose(model).toReturn(updatedBook, 'save');
+
+      // when
+      const controller = bookController(model);
+      const returnedBook = await controller.patch(mockBook, patchedBook);
+
+      // then
+      expect(JSON.parse(JSON.stringify(returnedBook))).toMatchObject(updatedBook);
+    });
+  });
 });
