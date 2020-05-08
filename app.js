@@ -3,17 +3,16 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const Book = require('./models/bookModel');
 const bookRouter = require('./routes/bookRouter')(Book);
+require('dotenv').config();
 
 // express
 const app = express();
 const port = process.env.PORT || 4000;
 
 // mongo db
-mongoose.set('useUnifiedTopology', true);
-if (process.env.ENV === 'Test') {
-  mongoose.connect('mongodb://localhost/bookAPI_test', { useNewUrlParser: true });
-} else {
-  mongoose.connect('mongodb://localhost/bookAPI', { useNewUrlParser: true });
+if (process.env.ENV !== 'Test') {
+  mongoose.set('useUnifiedTopology', true);
+  mongoose.connect(process.env.DB_URL, { useNewUrlParser: true });
 }
 
 // body parser

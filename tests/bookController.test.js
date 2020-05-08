@@ -9,14 +9,6 @@ const mockRequest = (queryIn, bodyIn) => ({
   body: bodyIn
 });
 
-const mockResponse = () => {
-  const res = {};
-  res.status = jest.fn().mockReturnValue(res);
-  res.json = jest.fn().mockReturnValue(res);
-  res.send = jest.fn().mockResolvedValue(res);
-  return res;
-};
-
 const mockBooks = [{
   title: 'Claire DeWitt and the City of the Dead',
   author: 'Sara Gran',

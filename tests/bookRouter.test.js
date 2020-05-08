@@ -2,8 +2,9 @@
 /* eslint-disable no-undef */
 const request = require('supertest');
 const mongoose = require('mongoose');
+const dbHandler = require('./db-handler');
 
-// set the test environment
+// set the ENV environment variable to test
 process.env.ENV = 'Test';
 
 const app = require('../app.js');
@@ -39,21 +40,24 @@ const mockBooks = [{
 }];
 
 describe('Book CRUD Tests:', () => {
-  beforeEach((done) => {
-    // delete all books
-    Book.deleteMany({}).exec();
-    // insert mock books
-    Book.create(mockBooks);
-    done();
+  beforeAll(async () => {
+    await dbHandler.connect();
   });
 
-  afterAll((done) => {
-    mongoose.connection.close();
+  beforeEach(async () => {
+    // delete all books
+    await Book.deleteMany({}).exec();
+    // insert mock books
+    await Book.create(mockBooks);
+  });
+
+  afterAll(async (done) => {
+    await dbHandler.closeDatabase();
     app.server.close(done());
   });
 
   describe('Get All Books', () => {
-    it('should all books be returned.', async (done) => {
+    it('should all books be returned.', async () => {
       // given
 
       // when
@@ -65,10 +69,9 @@ describe('Book CRUD Tests:', () => {
       expect(res.body).toContainEqual(
         expect.objectContaining({ _id: expect.anything() })
       );
-      done();
     });
 
-    it('should all crime books be returned.', async (done) => {
+    it('should all crime books be returned.', async () => {
       // given
 
       // when
@@ -81,7 +84,6 @@ describe('Book CRUD Tests:', () => {
       expect(res.body).toContainEqual(
         expect.objectContaining({ _id: expect.anything() })
       );
-      done();
     });
   });
 
