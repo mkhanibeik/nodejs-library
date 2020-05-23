@@ -4,7 +4,9 @@
   "description": "A Sample Nodejs Library Application",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint .",
+    "start": "nodemon app.js",
+    "test": "jest --coverage --runInBand"
   },
   "repository": {
     "type": "git",
@@ -15,5 +17,31 @@
   "bugs": {
     "url": "https://github.com/mkhanibeik/nodejs-library/issues"
   },
-  "homepage": "https://github.com/mkhanibeik/nodejs-library#readme"
+  "homepage": "https://github.com/mkhanibeik/nodejs-library#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "mongoose": "^5.9.12"
+  },
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-plugin-import": "^2.20.2",
+    "jest": "^26.0.1",
+    "mockingoose": "^2.13.2",
+    "mongodb-memory-server": "^6.5.2",
+    "nodemon": "^2.0.3",
+    "supertest": "^4.0.2"
+  },
+  "nodemonConfig": {
+    "restartable": "rs",
+    "ignore": [
+      "node_modules/**/node_modules"
+    ],
+    "delay": "2500",
+    "env": {
+      "NODE_ENV": "development"
+    }
+  }
 }
