@@ -1,9 +1,9 @@
 const express = require('express');
 const bookController = require('../controllers/bookController');
 
-function routes(Book) {
+function routes() {
   const bookRouter = express.Router();
-  const controller = bookController(Book);
+  const controller = bookController();
 
   // middleware to intercept the book object and add it to the request to be used later
   bookRouter.use('/books/:bookId', (req, res, next) => {
