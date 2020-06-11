@@ -22,8 +22,12 @@ function bookController() {
     if (!book.title) {
       return Promise.reject(new Error('Title is required'));
     }
-    const bookToSave = new Book(book);
-    return bookToSave.save();
+    return Book.create({
+      title: book.title,
+      author: book.author,
+      genre: book.genre,
+      read: book.read
+    });
   }
 
   // update book

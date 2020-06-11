@@ -19,7 +19,7 @@ function routes() {
 
   // get all books
   bookRouter.route('/books')
-    .get(async (req, res) => {
+    .get((req, res) => {
       controller.getAll(req)
         .then((books) => {
           res.status(200);
@@ -29,11 +29,11 @@ function routes() {
 
   //  get book by id
   bookRouter.route('/books/:bookId')
-    .get(async (req, res) => res.json(req.book));
+    .get((req, res) => res.json(req.book));
 
   // create book
   bookRouter.route('/books')
-    .post(async (req, res) => {
+    .post((req, res) => {
       controller.create(req.body)
         .then((book) => {
           res.status(201);
@@ -44,7 +44,7 @@ function routes() {
 
   // update book
   bookRouter.route('/books/:bookId')
-    .put(async (req, res) => {
+    .put((req, res) => {
       controller.update(req.book, req.body)
         .then((book) => {
           res.status(200);
@@ -55,7 +55,7 @@ function routes() {
 
   // patch book
   bookRouter.route('/books/:bookId')
-    .patch(async (req, res) => {
+    .patch((req, res) => {
       controller.patch(req.book, req.body)
         .then((book) => {
           res.status(200);
@@ -66,7 +66,7 @@ function routes() {
 
   // delete book
   bookRouter.route('/books/:bookId')
-    .delete(async (req, res) => {
+    .delete((req, res) => {
       controller.remove(req.book)
         .then(() => res.sendStatus(204));
     });
