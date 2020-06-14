@@ -30,6 +30,15 @@ function bookController() {
     });
   }
 
+  // create many books
+  function bulkCreate(books) {
+    if (books.some((book) => !book.title)) {
+      return Promise.reject(new Error('Title is required'));
+    }
+
+    return Book.bulkCreate(books);
+  }
+
   // update book
   function update(originalBook, newBook) {
     if (!newBook.title) {
@@ -62,8 +71,23 @@ function bookController() {
     return book.destroy();
   }
 
+  // delete All book
+  function removeAll() {
+    return Book.destroy({
+      where: {},
+      truncate: true
+    });
+  }
+
   return {
-    getAll, getOne, create, update, patch, remove
+    getAll,
+    getOne,
+    create,
+    bulkCreate,
+    update,
+    patch,
+    remove,
+    removeAll
   };
 }
 
