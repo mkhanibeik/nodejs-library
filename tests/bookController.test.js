@@ -23,8 +23,12 @@ jest.mock('../models/book', () => () => {
       // promise should be used to really return undefined
       if (!foundBook) return Promise.resolve(undefined);
       return foundBook;
-    } if (query === 'findAll' && options[0].where.genre) {
+    }
+    if (query === 'findAll' && options[0].where.genre) {
       return books.filter((book) => book.genre === options[0].where.genre);
+    }
+    if (query === 'destroy') {
+      return books.length;
     }
     // in case of undefined, the default callback is called
     return undefined;
@@ -128,6 +132,53 @@ describe('Book Controller Tests:', () => {
     });
   });
 
+  describe('Bulk Create Books', () => {
+    it('should return books with id.', async () => {
+      // given
+      const books = [{
+        title: 'The Time Machine',
+        genre: 'Science Fiction',
+        author: 'H. G. Wells',
+        read: false
+      }, {
+        title: 'The Time Machine 2',
+        genre: 'Science Fiction',
+        author: 'H. G. Wells',
+        read: false
+      }];
+
+      // when
+      const controller = bookController();
+      const returnedBooks = await controller.bulkCreate(books);
+
+      // then
+      expect(returnedBooks).toHaveLength(books.length);
+      expect(returnedBooks).toContainEqual(
+        expect.objectContaining({ id: expect.anything() })
+      );
+    });
+
+    it('Should not allow empty title.', async () => {
+      // given
+      const books = [{
+        genre: 'Science Fiction',
+        author: 'H. G. Wells',
+        read: false
+      }, {
+        title: 'The Time Machine 2',
+        genre: 'Science Fiction',
+        author: 'H. G. Wells',
+        read: false
+      }];
+
+      // when
+      const controller = bookController();
+      await expect(controller.bulkCreate(books))
+        // then
+        .rejects.toThrow('Title is required');
+    });
+  });
+
   describe('Update Book', () => {
     it('should return updated book.', async () => {
       // given
@@ -211,35 +262,31 @@ describe('Book Controller Tests:', () => {
     });
   });
 
-  // describe('Delete Book', () => {
-  //   it('should return deleted book.', async () => {
-  //     // given
-  //     const bookId = '507f191e810c19729de860ea';
-  //     const mockBook = mockBooks[0];
-  //     mockBook._id = bookId;
-  //     mockingoose(model).toReturn(mockBook, 'remove');
+  describe('Delete Book', () => {
+    it('should return no book.', async () => {
+      // given
+      const mockBook = mockBooks[0];
+      mockBook.destroy = () => { };
 
-  //     // when
-  //     const controller = bookController(model);
-  //     const deletedBook = await controller.remove(mockBook);
+      // when
+      const controller = bookController();
+      const deletedBook = await controller.remove(mockBook);
 
-  //     // then
-  //     expect(JSON.parse(JSON.stringify(deletedBook))).toMatchObject(mockBook);
-  //   });
+      // then
+      expect(deletedBook).toBeUndefined();
+    });
+  });
 
-  //   it('should return no book.', async () => {
-  //     // given
-  //     const bookId = '507f191e810c19729de860ea';
-  //     const mockBook = mockBooks[0];
-  //     mockBook._id = bookId;
-  //     mockingoose(model).toReturn(undefined, 'remove');
+  describe('Delete All Book', () => {
+    it('should return number of deleted books.', async () => {
+      // given
 
-  //     // when
-  //     const controller = bookController(model);
-  //     const deletedBook = await controller.remove(mockBook);
+      // when
+      const controller = bookController();
+      const deletedBooks = await controller.removeAll();
 
-  //     // then
-  //     expect(deletedBook).toBeUndefined();
-  //   });
-  // });
+      // then
+      expect(deletedBooks).toBe(mockBooks.length);
+    });
+  });
 });

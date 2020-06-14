@@ -1,58 +1,30 @@
-/* eslint-disable no-underscore-dangle */
+/* eslint-disable global-require */
 /* eslint-disable no-undef */
 const request = require('supertest');
-const mongoose = require('mongoose');
-const dbHandler = require('./db-handler');
+const mockBooks = require('./mockBooks');
+const bookController = require('../controllers/bookController');
 
-// set the ENV environment variable to test
-process.env.ENV = 'Test';
-
+const controller = bookController();
 const app = require('../app.js');
 
-const Book = mongoose.model('Book');
 const agent = request.agent(app);
 
-const mockBooks = [{
-  title: 'Claire DeWitt and the City of the Dead',
-  author: 'Sara Gran',
-  genre: 'Crime',
-  read: false
-}, {
-  title: 'Gone Girl',
-  author: 'Gillian Flynn',
-  genre: 'Crime',
-  read: true,
-}, {
-  title: 'The Thief',
-  author: 'Fuminori Nakamura',
-  genre: 'Crime',
-  read: false
-}, {
-  title: 'American Dirt',
-  author: 'Jeanine Cummins',
-  genre: 'Crime',
-  read: false
-}, {
-  title: 'The Time Machine',
-  genre: 'Science Fiction',
-  author: 'H. G. Wells',
-  read: false
-}];
+jest.mock('../models/postgresClient', () => {
+  const Seq = require('sequelize');
+  const dbClient = new Seq('sqlite::memory:', { logging: false });
+  dbClient.sync();
+  return dbClient;
+});
 
 describe('Book CRUD Tests:', () => {
-  beforeAll(async () => {
-    await dbHandler.connect();
-  });
-
   beforeEach(async () => {
     // delete all books
-    await Book.deleteMany({}).exec();
+    await controller.removeAll();
     // insert mock books
-    await Book.create(mockBooks);
+    await controller.bulkCreate(mockBooks);
   });
 
   afterAll(async (done) => {
-    await dbHandler.closeDatabase();
     app.server.close(done());
   });
 
@@ -67,7 +39,7 @@ describe('Book CRUD Tests:', () => {
       expect(res.status).toBe(200);
       expect(res.body).toHaveLength(mockBooks.length);
       expect(res.body).toContainEqual(
-        expect.objectContaining({ _id: expect.anything() })
+        expect.objectContaining({ id: expect.anything() })
       );
     });
 
@@ -82,7 +54,7 @@ describe('Book CRUD Tests:', () => {
       expect(res.status).toBe(200);
       expect(res.body).toHaveLength(mockBooks.filter((book) => book.genre === 'Crime').length);
       expect(res.body).toContainEqual(
-        expect.objectContaining({ _id: expect.anything() })
+        expect.objectContaining({ id: expect.anything() })
       );
     });
   });
@@ -90,19 +62,19 @@ describe('Book CRUD Tests:', () => {
   describe('Get One Book', () => {
     it('should return one book.', async () => {
       // given
-      const { _id } = (await agent.get('/api/books')).body[0];
+      const { id } = mockBooks[0];
 
       // when
-      const res = await agent.get(`/api/books/${_id}`);
+      const res = await agent.get(`/api/books/${id}`);
 
       // then
       expect(res.status).toBe(200);
-      expect(res.body._id).toEqual(_id);
+      expect(res.body.id).toEqual(id);
     });
 
     it('should return no book.', async () => {
       // given
-      const bookId = '507f191e810c19729de860ea';
+      const bookId = 12323;
 
       // when
       const res = await agent.get(`/api/books/${bookId}`);
@@ -128,7 +100,7 @@ describe('Book CRUD Tests:', () => {
 
       // then
       expect(res.status).toBe(201);
-      expect(res.body).toHaveProperty('_id');
+      expect(res.body).toHaveProperty('id');
     });
 
     it('Should not allow empty title.', async () => {
@@ -152,9 +124,9 @@ describe('Book CRUD Tests:', () => {
   describe('Update Book', () => {
     it('should update a book.', async () => {
       // given
-      const { _id } = (await agent.get('/api/books')).body[0];
+      const { id } = mockBooks[0];
       const book = {
-        _id,
+        id,
         title: 'The Time Machine',
         genre: 'Science Fiction',
         author: 'H. G. Wells',
@@ -162,7 +134,7 @@ describe('Book CRUD Tests:', () => {
       };
 
       // when
-      const res = await agent.put(`/api/books/${_id}`)
+      const res = await agent.put(`/api/books/${id}`)
         .send(book);
 
       // then
@@ -172,16 +144,16 @@ describe('Book CRUD Tests:', () => {
 
     it('Should not allow empty title.', async () => {
       // given
-      const { _id } = (await agent.get('/api/books')).body[0];
+      const { id } = mockBooks[0];
       const book = {
-        _id,
+        id,
         genre: 'Science Fiction',
         author: 'H. G. Wells',
         read: true
       };
 
       // when
-      const res = await agent.put(`/api/books/${_id}`)
+      const res = await agent.put(`/api/books/${id}`)
         .send(book);
 
       // then
@@ -191,7 +163,7 @@ describe('Book CRUD Tests:', () => {
 
     it('Should update no book.', async () => {
       // given
-      const bookId = '507f191e810c19729de860ea';
+      const bookId = 123434;
       const book = {
         bookId,
         genre: 'Science Fiction',
@@ -211,13 +183,13 @@ describe('Book CRUD Tests:', () => {
   describe('Patch Book', () => {
     it('should patch a book.', async () => {
       // given
-      const { _id } = (await agent.get('/api/books')).body[0];
+      const { id } = mockBooks[0];
       const book = {
         read: true
       };
 
       // when
-      const res = await agent.patch(`/api/books/${_id}`)
+      const res = await agent.patch(`/api/books/${id}`)
         .send(book);
 
       // then
@@ -227,25 +199,25 @@ describe('Book CRUD Tests:', () => {
 
     it('Should not patch id', async () => {
       // given
-      const { _id } = (await agent.get('/api/books')).body[0];
+      const { id } = mockBooks[0];
       const book = {
-        _id: 'randomid',
+        id: 1234,
         read: true
       };
 
       // when
-      const res = await agent.patch(`/api/books/${_id}`)
+      const res = await agent.patch(`/api/books/${id}`)
         .send(book);
 
       // then
       expect(res.status).toBe(200);
       expect(res.body.read).toBeTruthy();
-      expect(res.body._id).toEqual(_id);
+      expect(res.body.id).toEqual(id);
     });
 
     it('Should patch no book.', async () => {
       // given
-      const bookId = '507f191e810c19729de860ea';
+      const bookId = 12234;
       const book = {
         read: true
       };
@@ -262,10 +234,10 @@ describe('Book CRUD Tests:', () => {
   describe('Delete Book', () => {
     it('should delete a book.', async () => {
       // given
-      const { _id } = (await agent.get('/api/books')).body[0];
+      const { id } = mockBooks[0];
 
       // when
-      const res = await agent.delete(`/api/books/${_id}`);
+      const res = await agent.delete(`/api/books/${id}`);
 
       // then
       expect(res.status).toBe(204);
@@ -273,7 +245,7 @@ describe('Book CRUD Tests:', () => {
 
     it('Should delete no book.', async () => {
       // given
-      const bookId = '507f191e810c19729de860ea';
+      const bookId = 123344;
 
       // when
       const res = await agent.delete(`/api/books/${bookId}`);
