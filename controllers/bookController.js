@@ -54,15 +54,10 @@ function bookController() {
 
   // patch book
   function patch(originalBook, newBook) {
-    const updateValues = {};
-    Object.entries(newBook).forEach(item => {
-      const key = item[0];
-      const value = item[1];
-      // don't update the id of the book
-      if (key !== 'id') {
-        updateValues[key] = value;
-      }
-    });
+    const updateValues = { ...newBook };
+    // don't update the id of the book
+    delete updateValues.id;
+
     return originalBook.update(updateValues);
   }
 
