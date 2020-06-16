@@ -1,16 +1,20 @@
-function bookController(Book) {
+const Sequelize = require('sequelize');
+const dbClient = require('../models/postgresClient');
+const Book = require('../models/book')(dbClient, Sequelize);
+
+function bookController() {
   // get all books
   function getAll(req) {
     const query = {};
     if (req.query.genre) {
       query.genre = req.query.genre;
     }
-    return Book.find(query).exec();
+    return Book.findAll({ where: query });
   }
 
   // get a book by id
   function getOne(bookId) {
-    return Book.findById(bookId).exec();
+    return Book.findOne({ where: { id: bookId } });
   }
 
   // create book
@@ -18,8 +22,21 @@ function bookController(Book) {
     if (!book.title) {
       return Promise.reject(new Error('Title is required'));
     }
-    const bookToSave = new Book(book);
-    return bookToSave.save();
+    return Book.create({
+      title: book.title,
+      author: book.author,
+      genre: book.genre,
+      read: book.read
+    });
+  }
+
+  // create many books
+  function bulkCreate(books) {
+    if (books.some(book => !book.title)) {
+      return Promise.reject(new Error('Title is required'));
+    }
+
+    return Book.bulkCreate(books);
   }
 
   // update book
@@ -27,37 +44,45 @@ function bookController(Book) {
     if (!newBook.title) {
       return Promise.reject(new Error('Title is required'));
     }
-
-    const bookToSave = new Book(originalBook);
-    bookToSave.title = newBook.title;
-    bookToSave.author = newBook.author;
-    bookToSave.genre = newBook.genre;
-    bookToSave.read = newBook.read;
-    return bookToSave.save();
+    return originalBook.update({
+      title: newBook.title,
+      author: newBook.author,
+      genre: newBook.genre,
+      read: newBook.read
+    });
   }
 
   // patch book
   function patch(originalBook, newBook) {
-    const bookToSave = new Book(originalBook);
-    Object.entries(newBook).forEach((item) => {
-      const key = item[0];
-      const value = item[1];
-      // don't update the id of the book
-      if (key !== '_id') {
-        bookToSave[key] = value;
-      }
-    });
-    return bookToSave.save();
+    const updateValues = { ...newBook };
+    // don't update the id of the book
+    delete updateValues.id;
+
+    return originalBook.update(updateValues);
   }
 
   // delete book
   function remove(book) {
-    const bookToDelete = new Book(book);
-    return bookToDelete.remove();
+    return book.destroy();
+  }
+
+  // delete All book
+  function removeAll() {
+    return Book.destroy({
+      where: {},
+      truncate: true
+    });
   }
 
   return {
-    getAll, getOne, create, update, patch, remove
+    getAll,
+    getOne,
+    create,
+    bulkCreate,
+    update,
+    patch,
+    remove,
+    removeAll
   };
 }
 
