@@ -32,7 +32,7 @@ function bookController() {
 
   // create many books
   function bulkCreate(books) {
-    if (books.some((book) => !book.title)) {
+    if (books.some(book => !book.title)) {
       return Promise.reject(new Error('Title is required'));
     }
 
@@ -55,7 +55,7 @@ function bookController() {
   // patch book
   function patch(originalBook, newBook) {
     const updateValues = {};
-    Object.entries(newBook).forEach((item) => {
+    Object.entries(newBook).forEach(item => {
       const key = item[0];
       const value = item[1];
       // don't update the id of the book

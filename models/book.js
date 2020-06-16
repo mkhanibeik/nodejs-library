@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATE,
     }
   }, {});
-  Book.associate = (models) => {
+  Book.associate = models => {
     // associations can be defined here
   };
   return Book;

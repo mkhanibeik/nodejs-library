@@ -24,7 +24,7 @@ describe('Book CRUD Tests:', () => {
     await controller.bulkCreate(mockBooks);
   });
 
-  afterAll(async (done) => {
+  afterAll(async done => {
     app.server.close(done());
   });
 
@@ -52,7 +52,7 @@ describe('Book CRUD Tests:', () => {
 
       // then
       expect(res.status).toBe(200);
-      expect(res.body).toHaveLength(mockBooks.filter((book) => book.genre === 'Crime').length);
+      expect(res.body).toHaveLength(mockBooks.filter(book => book.genre === 'Crime').length);
       expect(res.body).toContainEqual(
         expect.objectContaining({ id: expect.anything() })
       );

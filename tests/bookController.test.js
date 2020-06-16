@@ -15,17 +15,17 @@ jest.mock('../models/book', () => () => {
   const dbMock = new SequelizeMock();
   const model = dbMock.define('book');
   model.$queueResult(
-    books.map((book) => model.build(book))
+    books.map(book => model.build(book))
   );
   model.$queryInterface.$useHandler((query, options) => {
     if (query === 'findOne') {
-      const foundBook = books.find((book) => book.id === options[0].where.id);
+      const foundBook = books.find(book => book.id === options[0].where.id);
       // promise should be used to really return undefined
       if (!foundBook) return Promise.resolve(undefined);
       return foundBook;
     }
     if (query === 'findAll' && options[0].where.genre) {
-      return books.filter((book) => book.genre === options[0].where.genre);
+      return books.filter(book => book.genre === options[0].where.genre);
     }
     if (query === 'destroy') {
       return books.length;
@@ -56,7 +56,7 @@ describe('Book Controller Tests:', () => {
     it('should all Crime books be returned.', async () => {
       // given
       const req = mockRequest({ genre: 'Crime' });
-      const crimeBooks = mockBooks.filter((book) => book.genre === 'Crime');
+      const crimeBooks = mockBooks.filter(book => book.genre === 'Crime');
 
       // when
       const controller = bookController();
@@ -74,7 +74,7 @@ describe('Book Controller Tests:', () => {
     it('should return one book.', async () => {
       // given
       const bookId = 1;
-      const mockBook = mockBooks.find((book) => book.id === bookId);
+      const mockBook = mockBooks.find(book => book.id === bookId);
 
       // when
       const controller = bookController();
@@ -183,7 +183,7 @@ describe('Book Controller Tests:', () => {
     it('should return updated book.', async () => {
       // given
       const bookId = 1;
-      const mockBook = mockBooks.find((book) => book.id === bookId);
+      const mockBook = mockBooks.find(book => book.id === bookId);
       const updatedBook = {
         id: bookId,
         title: 'The Time Machine',
@@ -204,7 +204,7 @@ describe('Book Controller Tests:', () => {
     it('Should not allow empty title.', async () => {
       // given
       const bookId = 1;
-      const mockBook = mockBooks.find((book) => book.id === bookId);
+      const mockBook = mockBooks.find(book => book.id === bookId);
       const updatedBook = {
         id: bookId,
         genre: 'Science Fiction',
@@ -224,7 +224,7 @@ describe('Book Controller Tests:', () => {
     it('should return patched book.', async () => {
       // given
       const bookId = 1;
-      const mockBook = mockBooks.find((book) => book.id === bookId);
+      const mockBook = mockBooks.find(book => book.id === bookId);
       const patchedBook = {
         read: true
       };
@@ -244,7 +244,7 @@ describe('Book Controller Tests:', () => {
       // given
       // given
       const bookId = 1;
-      const mockBook = mockBooks.find((book) => book.id === bookId);
+      const mockBook = mockBooks.find(book => book.id === bookId);
       const patchedBook = {
         id: 3434,
         read: true
