@@ -10,7 +10,7 @@ export default function routes() {
     controller.getOne(req.params.bookId)
       .then(book => {
         if (book) {
-          //res.locals.book = book;
+          res.locals.book = book;
           return next();
         }
         return res.sendStatus(404);

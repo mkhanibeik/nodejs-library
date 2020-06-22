@@ -1,32 +1,34 @@
-const Sequelize = require('sequelize');
-const dbClient = require('../models/postgresClient');
-const Book = require('../models/book')(dbClient, Sequelize);
+import Sequelize from 'sequelize';
+import dbClient from '../models/postgresClient';
+import Book from '../models/book';
 
-function bookController() {
+export default function bookController() {
+  const book = Book(dbClient, Sequelize);
+
   // get all books
   function getAll(req) {
     const query = {};
     if (req.query.genre) {
-      query.genre = req.query.genre;
+      //query.genre = req.query.genre;
     }
-    return Book.findAll({ where: query });
+    return book.findAll({ where: query });
   }
 
   // get a book by id
   function getOne(bookId) {
-    return Book.findOne({ where: { id: bookId } });
+    return book.findOne({ where: { id: bookId } });
   }
 
   // create book
-  function create(book) {
-    if (!book.title) {
+  function create(newBook) {
+    if (!newBook.title) {
       return Promise.reject(new Error('Title is required'));
     }
-    return Book.create({
-      title: book.title,
-      author: book.author,
-      genre: book.genre,
-      read: book.read
+    return book.create({
+      title: newBook.title,
+      author: newBook.author,
+      genre: newBook.genre,
+      read: newBook.read
     });
   }
 
@@ -36,7 +38,7 @@ function bookController() {
       return Promise.reject(new Error('Title is required'));
     }
 
-    return Book.bulkCreate(books);
+    return book.bulkCreate(books);
   }
 
   // update book
@@ -62,13 +64,13 @@ function bookController() {
   }
 
   // delete book
-  function remove(book) {
-    return book.destroy();
+  function remove(bookToDelete) {
+    return bookToDelete.destroy();
   }
 
   // delete All book
   function removeAll() {
-    return Book.destroy({
+    return book.destroy({
       where: {},
       truncate: true
     });
@@ -85,5 +87,3 @@ function bookController() {
     removeAll
   };
 }
-
-module.exports = bookController;

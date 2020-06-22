@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "lint": "eslint .",
+    "build": "tsc -b",
     "start": "nodemon app.ts",
     "debug": "node --inspect -r ts-node/register app.ts",
     "test": "jest --coverage --runInBand"
