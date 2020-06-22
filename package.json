@@ -1,11 +1,12 @@
 {
   "name": "nodejs-library",
   "version": "1.0.0",
-  "description": "A Sample Nodejs Library Application",
+  "description": "A Sample Node.js Library Application",
   "main": "index.js",
   "scripts": {
     "lint": "eslint .",
-    "start": "nodemon app.js",
+    "start": "nodemon app.ts",
+    "debug": "node --inspect -r ts-node/register app.ts",
     "test": "jest --coverage --runInBand"
   },
   "repository": {
@@ -26,6 +27,11 @@
     "sequelize": "^5.21.12"
   },
   "devDependencies": {
+    "@types/dotenv": "^8.2.0",
+    "@types/express": "^4.17.6",
+    "@types/node": "^14.0.13",
+    "@typescript-eslint/eslint-plugin": "^3.3.0",
+    "@typescript-eslint/parser": "^3.3.0",
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.1.0",
     "eslint-plugin-import": "^2.20.2",
@@ -34,7 +40,9 @@
     "sequelize-cli": "^5.5.1",
     "sequelize-mock": "^0.10.2",
     "sqlite3": "^4.2.0",
-    "supertest": "^4.0.2"
+    "supertest": "^4.0.2",
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.5"
   },
   "nodemonConfig": {
     "restartable": "rs",
